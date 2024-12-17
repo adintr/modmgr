@@ -2,21 +2,24 @@ use ini::Ini;
 use std::env;
 use std::io;
 use std::io::Write;
+use colored::Colorize;
 
-fn input_num() -> i32 {
-    loop
-    {
+fn input_num(min: i32, max:i32, title: &str) -> i32 {
+    loop {
+        print!("{}({}~{}): ", title, min, max);
+        io::stdout().flush().unwrap();        
         let mut line = String::new();        
         io::stdin().read_line(&mut line).unwrap();
-        let num: i32 = match line.trim().parse() {
-            Ok(num) => num,
-            Err(_) => {
-                print!("only interger input allowed: ");
-                io::stdout().flush().unwrap();
-                continue;
+        match line.trim().parse() {
+            Ok(num) => {
+                if num >= min && num <= max {
+                    break num;
+                } else {
+                    println!("input must be {} ~ {}", min, max.to_string().blue());
+                }
             }
-        };
-        return num;        
+            Err(_) => println!("{}", "only interger input allowed.".red())
+        };    
     }
 }
 
@@ -36,8 +39,6 @@ fn main() {
         println!("{}: {}", i, sec.unwrap());
     }
 
-    print!("Please select a game:");
-    io::stdout().flush().unwrap();
-    let sel = input_num();
+    let sel = input_num(1, 2, "Please select a game");
     println!("select {}", sel);
 }
